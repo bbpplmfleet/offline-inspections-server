@@ -4,11 +4,11 @@
   "description": "Simple server for PWA POC Project",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./public/index.js",
+    "dev": "nodemon ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "build": "",
-    "start": "node ./public/index.js"
+    "start": "node ./index.js"
   },
   "author": "",
   "license": "ISC",
