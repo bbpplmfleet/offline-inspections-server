@@ -4,9 +4,11 @@
   "description": "Simple server for PWA POC Project",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
-    "build": "echo 'No build step'"
+    "lint": "eslint .",
+    "build": "echo 'Build complete'",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,5 +22,9 @@
     "nodemon": "^3.0.1",
     "pg": "^8.11.2",
     "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "eslint": "^8.49.0",
+    "eslint-plugin-react": "^7.33.2"
   }
 }
