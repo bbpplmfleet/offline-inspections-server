@@ -39,6 +39,9 @@ router.get("/", (req, res) => {
   console.log("Server Pinged");
   res.send("Hello World");
 });
+router.get("/test", (req, res) => {
+  res.send("Express router working");
+});
 router.post("/", (req, res) => {
   console.log("server pinged with POST");
   res.send("Hello world again");
