@@ -1,10 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const fs = require("fs/promises");
-const { createWriteStream } = require("fs");
 const bodyParser = require("body-parser");
 const cloudinary = require("cloudinary").v2;
 var cors = require("cors");
+const { appendToDB, readDB } = require("./controllers");
 
 const app = express();
 app.use(bodyParser.json());
@@ -34,33 +34,16 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
-async function readDB() {
-  try {
-    return await fs.readFile("./db.json");
-  } catch (e) {
-    console.log(e);
-  }
-}
-async function appendToDB(newData) {
-  let currentDBState = await readDB(); // returns json string
-  let result = JSON.parse(currentDBState); // parse db state as an obj[]
-  result = [newData, ...result]; // push the new record to the list
-  currentDBState = JSON.stringify(result); // convert back to json
-  var writeStream = createWriteStream("db.json");
-  writeStream.write(currentDBState); // write new data
-  writeStream.end();
-  return "success";
-}
-
-app.get("/", (req, res) => {
+const router = express.Router();
+router.get("/", (req, res) => {
   console.log("Server Pinged");
   res.send("Hello World");
 });
-app.post("/", (req, res) => {
+router.post("/", (req, res) => {
   console.log("server pinged with POST");
   res.send("Hello world again");
 });
-app.post("/photos", async (req, res) => {
+router.post("/photos", async (req, res) => {
   console.log("posting photos");
   let errors = [];
   let result = {};
@@ -108,15 +91,15 @@ app.post("/photos", async (req, res) => {
   }
 });
 
-app.get("/photos", async (req, res) => {
+router.get("/photos", async (req, res) => {
   // todo: get all photos from database
   let db = await readDB();
   let result = JSON.parse(db);
   res.json(result);
 });
-app.get("/*", async (req, res) => {
+router.get("/*", async (req, res) => {
   res.send(req.body, req.headers, req);
 });
-
+app.use(router);
 app.listen(8001);
 console.log("App started");
