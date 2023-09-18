@@ -1,11 +1,14 @@
 require("dotenv").config();
 const express = require("express");
-const fs = require("fs/promises");
 const bodyParser = require("body-parser");
 const cloudinary = require("cloudinary").v2;
 var cors = require("cors");
-const { appendToDB, readDB } = require("./controllers");
-
+const {
+  getAllRecords,
+  createTable,
+  appendRecord,
+  deleteTable,
+} = require("./dbConnector");
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,7 +47,25 @@ router.get("/test", (req, res) => {
 });
 router.post("/", (req, res) => {
   console.log("server pinged with POST");
-  res.send("Hello world again");
+  res.send("Hello world again, but with a post request");
+});
+router.post("/initDb", async (req, res) => {
+  console.log("Initializing DB");
+  let created = await createTable();
+  if (created) {
+    res.send("DB initialized");
+  } else {
+    res.send("DB initialization failed");
+  }
+});
+router.post("/deleteDb", async (req, res) => {
+  console.log("deleting DB");
+  let deleted = await deleteTable();
+  if (deleted) {
+    res.send("DB deleted");
+  } else {
+    res.send("DB deletion failed");
+  }
 });
 router.post("/photos", async (req, res) => {
   console.log("posting photos");
@@ -64,12 +85,14 @@ router.post("/photos", async (req, res) => {
           id: post.id,
           caption: post.caption,
           createdAt: post.createdAt,
+          uploadedAt: new Date(),
           imageUrl: cloudinaryUrl.secure_url,
           imageAlt: post.photo.name,
         };
 
-        let result = await appendToDB(data);
-        if (result === "success") {
+        let uploaded = await appendRecord(data);
+        if (uploaded) {
+          console.log("uploaded record successfully");
           result = {
             ...data,
           };
@@ -96,13 +119,14 @@ router.post("/photos", async (req, res) => {
 
 router.get("/photos", async (req, res) => {
   // todo: get all photos from database
-  let db = await readDB();
-  let result = JSON.parse(db);
-  res.json(result);
+  let db = await getAllRecords();
+  console.log(db);
+  // let result = JSON.parse(db);
+  res.json(db);
 });
 router.get("/*", async (req, res) => {
   res.send(req.body, req.headers, req);
 });
 app.use(router);
-app.listen(8001);
+app.listen(8003);
 console.log("App started");
