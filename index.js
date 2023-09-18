@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:4173");
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://offline-inspections-client.vercel.app/**"
+    "https://offline-inspections-client.vercel.app"
   );
   // res.setHeader(
   //   "Access-Control-Allow-Origin",
