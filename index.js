@@ -21,10 +21,6 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Origin",
     "https://offline-inspections-client.vercel.app"
   );
-  // res.setHeader(
-  //   "Access-Control-Allow-Origin",
-  //   "https://clientdev.clean-really-bullfrog.ngrok-free.app"
-  // );
 
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -93,8 +89,10 @@ router.post("/photos", async (req, res) => {
         let uploaded = await appendRecord(data);
         if (uploaded) {
           console.log("uploaded record successfully");
+          let id = post.id;
           result = {
-            ...data,
+            ...result,
+            [id]: data,
           };
         }
       }
