@@ -63,6 +63,7 @@ router.post("/deleteDb", async (req, res) => {
     res.send("DB deletion failed");
   }
 });
+
 router.post("/photos", async (req, res) => {
   console.log("posting photos");
   let errors = [];
@@ -73,7 +74,8 @@ router.post("/photos", async (req, res) => {
     res.status(500).send({ message: "no posts" });
     return;
   }
-  posts.forEach(async (post) => {
+  for (let post of posts) {
+    console.log(post.id);
     try {
       let cloudinaryUrl = await cloudinary.uploader.upload(post.photo.encoded);
       if (!!cloudinaryUrl) {
@@ -87,30 +89,36 @@ router.post("/photos", async (req, res) => {
         };
 
         let uploaded = await appendRecord(data);
-        if (uploaded) {
-          console.log("uploaded record successfully");
+        console.log("was it uploaded?", uploaded);
+        if (uploaded === "uploaded") {
+          console.log("uploaded record successfully with data:", data);
           let id = post.id;
           result = {
             ...result,
             [id]: data,
           };
+          console.log("result", result);
+        } else {
+          errors.push(uploaded);
         }
       }
     } catch (error) {
       console.log(error);
       errors.push(error);
     }
-  });
+  }
 
-  if (errors.length > 0) {
-    res.status(500).send({
-      message: "Cloudinary failure",
-      errors,
-    });
-  } else {
+  console.log("here now");
+  if (errors.length === 0) {
+    console.log("result", result);
     res.status(200).send({
       message: "success",
       result,
+    });
+  } else {
+    res.status(500).send({
+      message: "Cloudinary failure",
+      errors,
     });
   }
 });

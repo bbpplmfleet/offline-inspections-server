@@ -50,10 +50,10 @@ const appendRecord = async (post) => {
       ]
     );
     console.log("Record appended successfully");
-    return true;
+    return "uploaded";
   } catch (error) {
     console.error("Error appending record", error);
-    return false;
+    return error;
   }
 };
 
